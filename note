@@ -1,0 +1,26 @@
+http://ubuntu-server:15672/api/exchanges/%2F/amq.default/publish
+
+
+{
+   "vhost":"/",
+   "name":"amq.default",
+   "properties":{
+      "delivery_mode":1,
+      "headers":{
+         
+      }
+   },
+   "routing_key":"queue_produccer_one",
+   "delivery_mode":"1",
+   "payload":"{name:\"name-1\", type:\"test-performance\"}",
+   "headers":{
+      
+   },
+   "props":{
+      
+   },
+   "payload_encoding":"string"
+}
+
+***
+"Authorization""Basic dGVzdDp0ZXN0"
