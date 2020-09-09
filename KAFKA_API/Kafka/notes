@@ -1,0 +1,39 @@
+FROM openjdk
+RUN cd /opt && curl -OL https://downloads.apache.org/kafka/2.5.0/kafka_2.13-2.5.0.tgz && tar -zxvf kafka_2.13-2.5.0.tgz && rm kafka_2.13-2.5.0.tgz
+WORKDIR /opt/kafka_2.13-2.5.0
+COPY start.sh .
+CMD [ "./start.sh" ]
+
+
+
+sudo docker build . -t kafka:2.5.0
+docker run -d -p 9092:9092 --name kafka-broker kafka:2.5.0
+
+
+docker run -d -p 9092:9092/udp -p 9092:9092  --name kafka-broker kafka:2.5.0
+
+
+docker run --rm -it --link kafka-broker --name temp kafka:2.5.0 \
+bin/kafka-topics.sh --create  --bootstrap-server kafka-broker:9092 --replication-factor 1 --partitions 1 --topic test
+
+
+docker run --rm -it  --name temp kafka:2.5.0 \
+bin/kafka-topics.sh --create  --bootstrap-server 10.0.2.15:9092 --replication-factor 1 --partitions 1 --topic test
+
+
+docker run --rm -it  --name temp kafka:2.5.0 \
+bin/kafka-topics.sh --create  --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic test
+
+
+docker run --rm -it --link kafka-broker --name temp kafka:2.5.0 \
+bin/kafka-topics.sh --list --bootstrap-server kafka-broker:9092 
+
+docker run --rm -it --link kafka-broker --name producer kafka:2.5.0 \
+bin/kafka-console-producer.sh --bootstrap-server kafka-broker:9092 --topic test
+
+docker run --rm -it --link kafka-broker --name consumer kafka:2.5.0 \
+bin/kafka-console-consumer.sh --bootstrap-server kafka-broker:9092 --topic test --from-beginning
+
+
+docker run --rm -it -p 9091:9092 --link kafka-broker --name producer kafka:2.5.0 \
+bin/kafka-console-producer.sh --bootstrap-server kafka-broker:9092 --topic test
